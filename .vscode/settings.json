@@ -9,5 +9,8 @@
     "editor.wordWrapColumn": 120,
     "editor.rulers": [120, 140, 160],
     "editor.fontSize": 12,
-    "cSpell.words": ["colours"]
+    "cSpell.words": ["colours"],
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
