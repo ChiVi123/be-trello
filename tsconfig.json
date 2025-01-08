@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "target": "es2016",
+        "module": "Node16",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "moduleResolution": "node16",
+        "outDir": "build",
+        "noEmit": true
+    },
+    "exclude": ["node_modules/"],
+    "include": ["src/**/*.ts"]
+}
