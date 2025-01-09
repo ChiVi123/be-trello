@@ -8,7 +8,20 @@
         "skipLibCheck": true,
         "moduleResolution": "node16",
         "outDir": "build",
-        "noEmit": true
+        "removeComments": true,
+        "paths": {
+            "~config/*": ["./src/config/*"],
+            "~controllers/*": ["./src/controllers/*"],
+            "~helpers/*": ["./src/helpers/*"],
+            "~middleware/*": ["./src/middleware/*"],
+            "~models/*": ["./src/models/*"],
+            "~providers/*": ["./src/providers/*"],
+            "~routes/*": ["./src/routes/*"],
+            "~services/*": ["./src/services/*"],
+            "~sockets/*": ["./src/sockets/*"],
+            "~utils/*": ["./src/rutils/*"],
+            "~validators/*": ["./src/validators/*"]
+        }
     },
     "exclude": ["node_modules/"],
     "include": ["src/**/*.ts"]

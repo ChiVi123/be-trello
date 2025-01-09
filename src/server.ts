@@ -1,4 +1,7 @@
+import "module-alias/register";
 import express from "express";
+import { routeV1 } from "~routes/v1";
+import { routeV2 } from "~routes/v2";
 
 const app = express();
 const hostname = "localhost";
@@ -10,4 +13,5 @@ app.get("/", function (req, res) {
 
 app.listen(port, hostname, () => {
     console.log(`Running server ${hostname}:${port}/`);
+    console.log({ routeV1 }, { routeV2 });
 });

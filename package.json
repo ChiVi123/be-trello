@@ -3,7 +3,9 @@
     "version": "1.0.0",
     "main": "src/server.ts",
     "scripts": {
-        "dev": "npx nodemon",
+        "dev": "nodemon",
+        "build": "tsc -p tsconfig.json",
+        "start": "node build/server.js",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,17 +14,33 @@
     "author": "",
     "license": "ISC",
     "description": "",
+    "_moduleAliases": {
+        "~config": "build/config",
+        "~controllers": "build/controllers",
+        "~helpers": "build/helpers",
+        "~middleware": "build/middleware",
+        "~models": "build/models",
+        "~providers": "build/providers",
+        "~routes": "build/routes",
+        "~services": "build/services",
+        "~sockets": "build/sockets",
+        "~utils": "build/rutils",
+        "~validators": "build/validators"
+    },
+    "dependencies": {
+        "express": "^4.21.2"
+    },
     "devDependencies": {
         "@eslint/js": "^9.17.0",
         "@types/express": "^5.0.0",
+        "@types/module-alias": "^2.0.4",
+        "@types/node": "^22.10.5",
         "eslint": "^9.17.0",
         "globals": "^15.14.0",
+        "module-alias": "^2.2.3",
         "nodemon": "^3.1.9",
         "ts-node": "^10.9.2",
         "typescript": "^5.7.2",
         "typescript-eslint": "^8.19.1"
-    },
-    "dependencies": {
-        "express": "^4.21.2"
     }
 }

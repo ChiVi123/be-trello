@@ -33,6 +33,6 @@ export default [
             "comma-spacing": 1,
             "arrow-spacing": 1,
         },
-        ignores: ["**/node_modules/", "**/dist/", "**/build/"],
+        ignores: ["**/node_modules/**/*", "**/dist/**/*", "build/**/*"],
     },
 ];
