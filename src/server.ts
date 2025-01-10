@@ -9,6 +9,8 @@ import { apisV1 } from "~routes/v1";
 const startServer = () => {
     const app = express();
 
+    app.use(express.json());
+
     app.use("/v1", apisV1);
 
     app.listen(env.SERVER_PORT, env.SERVER_HOSTNAME, () => {

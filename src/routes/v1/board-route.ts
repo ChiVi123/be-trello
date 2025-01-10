@@ -1,15 +1,14 @@
 import { Router } from "express";
 import { StatusCodes } from "~utils/status-codes";
+import { boardValidation } from "~validators/board-validator";
 
 const router = Router();
 
 router
     .route("/")
-    .get((res, req) => {
-        req.status(StatusCodes.OK).json({ message: "API list board!!!", statusCode: StatusCodes.OK });
+    .get((req, res) => {
+        res.status(StatusCodes.OK).json({ message: "API list board!!!", statusCode: StatusCodes.OK });
     })
-    .post((res, req) => {
-        req.status(StatusCodes.CREATED).json({ message: "API create new board!!!", statusCode: StatusCodes.CREATED });
-    });
+    .post(boardValidation.createNew);
 
 export const boardRoute = router;
