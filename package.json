@@ -3,9 +3,9 @@
     "version": "1.0.0",
     "main": "src/server.ts",
     "scripts": {
-        "dev": "nodemon",
+        "dev": "cross-env BUILD_MODE=development nodemon",
         "build": "rm -rf build && tsc -p tsconfig.json",
-        "start": "node -r ts-node/register/transpile-only -r tsconfig-paths/register build/server.js",
+        "start": "cross-env BUILD_MODE=production node -r ts-node/register/transpile-only -r tsconfig-paths/register build/server.js",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -26,6 +26,7 @@
         "@types/async-exit-hook": "^2.0.2",
         "@types/express": "^5.0.0",
         "@types/node": "^22.10.5",
+        "cross-env": "^7.0.3",
         "eslint": "^9.17.0",
         "globals": "^15.14.0",
         "nodemon": "^3.1.9",

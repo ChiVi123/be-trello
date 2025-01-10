@@ -8,6 +8,7 @@ const mongoUri = `mongodb+srv://${mongoUsername}:${mongoPassword}@${mongoCluster
 
 export const env = {
     AUTHOR: process.env.AUTHOR,
+    BUILD_MODE: process.env.BUILD_MODE,
     MONGO_URI: process.env.MONGO_URI || mongoUri + "?retryWrites=true&w=majority&appName=Cluster0",
     MONGO_DATABASE_NAME: process.env.MONGO_DATABASE_NAME,
     SERVER_PROTOCOL: process.env.SERVER_PROTOCOL,
