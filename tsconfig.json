@@ -19,7 +19,7 @@
             "~routes/*": ["./src/routes/*"],
             "~services/*": ["./src/services/*"],
             "~sockets/*": ["./src/sockets/*"],
-            "~utils/*": ["./src/rutils/*"],
+            "~utils/*": ["./src/utils/*"],
             "~validators/*": ["./src/validators/*"]
         }
     },
