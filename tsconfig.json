@@ -13,7 +13,7 @@
             "~config/*": ["./src/config/*"],
             "~controllers/*": ["./src/controllers/*"],
             "~helpers/*": ["./src/helpers/*"],
-            "~middleware/*": ["./src/middleware/*"],
+            "~middlewares/*": ["./src/middlewares/*"],
             "~models/*": ["./src/models/*"],
             "~providers/*": ["./src/providers/*"],
             "~routes/*": ["./src/routes/*"],
