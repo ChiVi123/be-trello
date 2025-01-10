@@ -4,13 +4,12 @@ import exitHook from "async-exit-hook";
 import express from "express";
 import { env } from "~config/environment";
 import { closeMongoDB, connectDB } from "~config/mongodb";
+import { apisV1 } from "~routes/v1";
 
 const startServer = () => {
     const app = express();
 
-    app.get("/", (req, res) => {
-        res.send("<h1>Hello World</h1>");
-    });
+    app.use("/v1", apisV1);
 
     app.listen(env.SERVER_PORT, env.SERVER_HOSTNAME, () => {
         console.log(`3. Hi ${env.AUTHOR}, Server running at http://${env.SERVER_HOSTNAME}:${env.SERVER_PORT}`);
