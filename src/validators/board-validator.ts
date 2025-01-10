@@ -1,8 +1,8 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
 import { StatusCodes } from "~utils/status-codes";
 
-const createNew = async (req: Request, res: Response) => {
+const createNew = async (req: Request, res: Response, next: NextFunction) => {
     const correctCondition = Joi.object({
         title: Joi.string().required().min(3).max(50).trim().strict().messages({
             "any.required": "Title is required",
@@ -16,7 +16,7 @@ const createNew = async (req: Request, res: Response) => {
 
     try {
         await correctCondition.validateAsync(req.body, { abortEarly: false });
-        res.status(StatusCodes.CREATED).json({ message: "API create new board!!!" });
+        next();
     } catch (error) {
         if (error instanceof Error) {
             res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({ message: error.message });
