@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 // Generated file. Do not edit
 export enum StatusCodes {
     /**

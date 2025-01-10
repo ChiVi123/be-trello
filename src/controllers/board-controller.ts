@@ -1,13 +1,13 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
+import ApiError from "~utils/api-error";
 import { StatusCodes } from "~utils/status-codes";
 
-const createNew = async (req: Request, res: Response) => {
+const createNew = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        res.status(StatusCodes.CREATED).json({ message: "API create new board!!!" });
+        // res.status(StatusCodes.CREATED).json({ message: "API create new board!!!" });
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Test error");
     } catch (error) {
-        if (error instanceof Error) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
-        }
+        next(error);
     }
 };
 
