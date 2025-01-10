@@ -1,10 +1,9 @@
 /* eslint-disable no-console */
-import "module-alias/register";
 
 import exitHook from "async-exit-hook";
 import express from "express";
-import { env } from "./config/environment";
-import { closeMongoDB, connectDB } from "./config/mongodb";
+import { env } from "~config/environment";
+import { closeMongoDB, connectDB } from "~config/mongodb";
 
 const startServer = () => {
     const app = express();

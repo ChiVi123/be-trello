@@ -4,8 +4,8 @@
     "main": "src/server.ts",
     "scripts": {
         "dev": "nodemon",
-        "build": "tsc -p tsconfig.json",
-        "start": "node build/server.js",
+        "build": "rm -rf build && tsc -p tsconfig.json",
+        "start": "node -r ts-node/register/transpile-only -r tsconfig-paths/register build/server.js",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,19 +14,6 @@
     "author": "",
     "license": "ISC",
     "description": "",
-    "_moduleAliases": {
-        "~config": "build/config",
-        "~controllers": "build/controllers",
-        "~helpers": "build/helpers",
-        "~middleware": "build/middleware",
-        "~models": "build/models",
-        "~providers": "build/providers",
-        "~routes": "build/routes",
-        "~services": "build/services",
-        "~sockets": "build/sockets",
-        "~utils": "build/utils",
-        "~validators": "build/validators"
-    },
     "dependencies": {
         "async-exit-hook": "^2.0.1",
         "dotenv": "^16.4.7",
@@ -42,6 +29,7 @@
         "globals": "^15.14.0",
         "nodemon": "^3.1.9",
         "ts-node": "^10.9.2",
+        "tsconfig-paths": "^4.2.0",
         "typescript": "^5.7.2",
         "typescript-eslint": "^8.19.1"
     }
