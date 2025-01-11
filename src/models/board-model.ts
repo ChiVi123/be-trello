@@ -1,4 +1,6 @@
 import Joi from "joi";
+import { Condition, ObjectId } from "mongodb";
+import { getDB } from "~config/mongodb";
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "~utils/validators";
 
 const collectionName = "boards";
@@ -13,7 +15,16 @@ const collectionSchema = Joi.object({
     _destroy: Joi.boolean().default(false),
 });
 
+const createNew = async (data: Record<string, unknown>) => {
+    return getDB().collection(collectionName).insertOne(data);
+};
+const findOneById = async (id: Condition<ObjectId> | undefined) => {
+    return getDB().collection(collectionName).findOne({ _id: id });
+};
+
 export const boardModel = {
     collectionName,
     collectionSchema,
+    createNew,
+    findOneById,
 };
