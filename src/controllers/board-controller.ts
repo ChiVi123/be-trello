@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import ApiError from "~utils/api-error";
+import { boardService } from "~services/board-service";
 import { StatusCodes } from "~utils/status-codes";
 
 const createNew = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // res.status(StatusCodes.CREATED).json({ message: "API create new board!!!" });
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Test error");
+        const createdBoard = await boardService.createNew(req.body);
+        res.status(StatusCodes.CREATED).json(createdBoard);
     } catch (error) {
         next(error);
     }
