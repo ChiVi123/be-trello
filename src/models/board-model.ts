@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { Condition, ObjectId } from "mongodb";
+import { ObjectId } from "mongodb";
 import { getDB } from "~config/mongodb";
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "~utils/validators";
 
@@ -15,11 +15,17 @@ const collectionSchema = Joi.object({
     _destroy: Joi.boolean().default(false),
 });
 
-const createNew = async (data: Record<string, unknown>) => {
-    return getDB().collection(collectionName).insertOne(data);
+const validateBeforeCreate = async (data: Record<string, unknown>) => {
+    return collectionSchema.validateAsync(data, { abortEarly: false });
 };
-const findOneById = async (id: Condition<ObjectId> | undefined) => {
-    return getDB().collection(collectionName).findOne({ _id: id });
+const createNew = async (data: Record<string, unknown>) => {
+    const validData = await validateBeforeCreate(data);
+    return getDB().collection(collectionName).insertOne(validData);
+};
+const findOneById = async (id: ObjectId | string | undefined) => {
+    return getDB()
+        .collection(collectionName)
+        .findOne({ _id: new ObjectId(id) });
 };
 
 export const boardModel = {
