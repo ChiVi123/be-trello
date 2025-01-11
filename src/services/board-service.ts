@@ -1,6 +1,8 @@
+import { cloneDeep } from "lodash";
+import { ObjectId } from "mongodb";
 import { boardModel } from "~models/board-model";
 import ApiError from "~utils/api-error";
-import { slugify } from "~utils/formaters";
+import { slugify } from "~utils/formatters";
 import { StatusCodes } from "~utils/status-codes";
 
 const createNew = async (data: Record<string, unknown>) => {
@@ -12,7 +14,15 @@ const getDetail = async (id: string) => {
     if (!board) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Board not found!");
     }
-    return board;
+    const clonedBoard = cloneDeep(board);
+
+    clonedBoard.columns.forEach((column: { cards: ObjectId[]; _id: ObjectId }) => {
+        column.cards = clonedBoard.cards.filter((card: { columnId: ObjectId }) => card.columnId.equals(column._id));
+    });
+
+    delete clonedBoard.cards;
+
+    return clonedBoard;
 };
 
 export const boardService = {
