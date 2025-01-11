@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
 import ApiError from "~utils/api-error";
+import { BOARD_TYPES } from "~utils/constants";
 import { StatusCodes } from "~utils/status-codes";
 
 const createNew = async (req: Request, res: Response, next: NextFunction) => {
@@ -13,6 +14,7 @@ const createNew = async (req: Request, res: Response, next: NextFunction) => {
             "string.trim": "[Title]: not have leading or trailing whitespace",
         }),
         description: Joi.string().required().min(3).max(256).trim().strict(),
+        type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE).required(),
     });
 
     try {
