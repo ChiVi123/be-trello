@@ -27,10 +27,16 @@ const findOneById = async (id: ObjectId | string | undefined) => {
         .collection(collectionName)
         .findOne({ _id: new ObjectId(id) });
 };
+const getDetail = async (id: ObjectId | string | undefined) => {
+    return getDB()
+        .collection(collectionName)
+        .findOne({ _id: new ObjectId(id) });
+};
 
 export const boardModel = {
     collectionName,
     collectionSchema,
     createNew,
     findOneById,
+    getDetail,
 };
