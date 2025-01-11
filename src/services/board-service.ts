@@ -1,12 +1,9 @@
+import { boardModel } from "~models/board-model";
 import { slugify } from "~utils/formaters";
 
 const createNew = async (data: Record<string, unknown>) => {
-    try {
-        const newBoard = { ...data, slug: slugify(data.title) };
-        return newBoard;
-    } catch (error) {
-        throw error;
-    }
+    const newBoard = { ...data, slug: slugify(data.title) };
+    return boardModel.createNew(newBoard);
 };
 
 export const boardService = {
