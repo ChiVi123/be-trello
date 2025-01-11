@@ -54,7 +54,7 @@ const getDetail = async (id: ObjectId | string | undefined) => {
             },
         ])
         .toArray();
-    return result[0] || {};
+    return result[0] || null;
 };
 
 export const boardModel = {
