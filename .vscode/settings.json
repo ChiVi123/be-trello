@@ -2,7 +2,6 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.bracketPairColorization.enabled": true,
     "editor.formatOnSave": true,
-    "editor.formatOnPaste": true,
     "editor.fontFamily": "Cascadia Code, Fira Code, Roboto Mono, monospace",
     "editor.fontLigatures": true,
     "editor.wordWrap": "wordWrapColumn",
