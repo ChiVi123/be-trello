@@ -1,11 +1,17 @@
+import { boardModel } from "~models/board-model";
 import { columnModel } from "~models/column-model";
 
 const createNew = async (data: Record<string, unknown>) => {
     const newColumn = { ...data };
     const insertedOneResult = await columnModel.createNew(newColumn);
-    const createdColumn = await columnModel.findOneById(insertedOneResult.insertedId);
+    const getNewColumn = await columnModel.findOneById(insertedOneResult.insertedId);
 
-    return createdColumn;
+    if (getNewColumn) {
+        getNewColumn.cards = [];
+        await boardModel.pushColumnOrderIds(getNewColumn);
+    }
+
+    return getNewColumn;
 };
 
 export const columnService = {

@@ -1,11 +1,16 @@
 import { cardModel } from "~models/card-model";
+import { columnModel } from "~models/column-model";
 
 const createNew = async (data: Record<string, unknown>) => {
     const newCard = { ...data };
     const insertedOneResult = await cardModel.createNew(newCard);
-    const createdCard = await cardModel.findOneById(insertedOneResult.insertedId);
+    const getNewCard = await cardModel.findOneById(insertedOneResult.insertedId);
 
-    return createdCard;
+    if (getNewCard) {
+        await columnModel.pushCardOrderIds(getNewCard);
+    }
+
+    return getNewCard;
 };
 
 export const cardService = {
