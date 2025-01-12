@@ -7,7 +7,8 @@ import { StatusCodes } from "~utils/status-codes";
 
 const createNew = async (data: Record<string, unknown>) => {
     const newBoard = { ...data, slug: slugify(data.title) };
-    return boardModel.createNew(newBoard);
+    const insertedOneResult = await boardModel.createNew(newBoard);
+    return boardModel.findOneById(insertedOneResult.insertedId);
 };
 const getDetail = async (id: string) => {
     const board = await boardModel.getDetail(id);
