@@ -3,6 +3,7 @@ import Joi from "joi";
 import ApiError from "~utils/api-error";
 import { BOARD_TYPES } from "~utils/constants";
 import { StatusCodes } from "~utils/status-codes";
+import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "~utils/validators";
 
 const createNew = async (req: Request, res: Response, next: NextFunction) => {
     const correctCondition = Joi.object({
@@ -28,7 +29,27 @@ const createNew = async (req: Request, res: Response, next: NextFunction) => {
         }
     }
 };
+const update = async (req: Request, res: Response, next: NextFunction) => {
+    const correctCondition = Joi.object({
+        title: Joi.string().min(3).max(50).trim().strict(),
+        description: Joi.string().min(3).max(256).trim().strict(),
+        type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE),
+        columnOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)),
+    });
+
+    try {
+        await correctCondition.validateAsync(req.body, { abortEarly: false, allowUnknown: true });
+        next();
+    } catch (error) {
+        if (error instanceof Error) {
+            next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, error.message));
+        } else {
+            next(error);
+        }
+    }
+};
 
 export const boardValidation = {
     createNew,
+    update,
 };

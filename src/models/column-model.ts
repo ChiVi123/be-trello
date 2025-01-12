@@ -40,15 +40,13 @@ const findOneById = async (id: ObjectId | string | undefined) => {
         .findOne({ _id: new ObjectId(id) });
 };
 const pushCardOrderIds = async (card: WithId<{ columnId: ObjectId | string }>) => {
-    const result = await getDB()
+    return getDB()
         .collection<ColumnDocument>(collectionName)
         .findOneAndUpdate(
             { _id: new ObjectId(card.columnId) },
             { $push: { cardOrderIds: new ObjectId(card._id) } },
             { returnDocument: "after" },
         );
-
-    return result;
 };
 
 export const columnModel = {
