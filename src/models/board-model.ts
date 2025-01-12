@@ -20,6 +20,7 @@ const collectionSchema = Joi.object({
     updatedAt: Joi.date().timestamp("javascript").default(null),
     _destroy: Joi.boolean().default(false),
 });
+const invalidUpdateFields = ["_id", "createdAt"];
 
 const validateBeforeCreate = async (data: Record<string, unknown>) => {
     return collectionSchema.validateAsync(data, { abortEarly: false });
@@ -59,15 +60,24 @@ const getDetail = async (id: ObjectId | string | undefined) => {
     return result[0] || null;
 };
 const pushColumnOrderIds = async (column: WithId<{ boardId: ObjectId | string }>) => {
-    const result = await getDB()
+    return getDB()
         .collection<BoardDocument>(collectionName)
         .findOneAndUpdate(
             { _id: new ObjectId(column.boardId) },
             { $push: { columnOrderIds: new ObjectId(column._id) } },
             { returnDocument: "after" },
         );
+};
+const update = async (id: string, updateData: Record<string, unknown>) => {
+    Object.keys(updateData).forEach((key) => {
+        if (invalidUpdateFields.includes(key)) {
+            delete updateData[key];
+        }
+    });
 
-    return result;
+    return getDB()
+        .collection<BoardDocument>(collectionName)
+        .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updateData }, { returnDocument: "after" });
 };
 
 export const boardModel = {
@@ -77,4 +87,5 @@ export const boardModel = {
     findOneById,
     getDetail,
     pushColumnOrderIds,
+    update,
 };

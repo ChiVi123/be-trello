@@ -25,8 +25,18 @@ const getDetail = async (id: string) => {
 
     return clonedBoard;
 };
+const update = async (id: string, reqBody: Record<string, unknown>) => {
+    const updateData = { ...reqBody, updatedAt: Date.now(), _id: "updated id", createdAt: "update createdAt" };
+    const updatedBoard = await boardModel.update(id, updateData);
+    if (!updatedBoard) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Board not found!");
+    }
+
+    return updatedBoard;
+};
 
 export const boardService = {
     createNew,
     getDetail,
+    update,
 };
