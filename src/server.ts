@@ -21,9 +21,20 @@ const startServer = () => {
     // Error handling - place right before listen method - if else the middleware is not working
     app.use(errorHandlingMiddleware);
 
-    app.listen(env.SERVER_PORT, env.SERVER_HOSTNAME, () => {
-        console.log(`3. Hi ${env.AUTHOR}, Server running at http://${env.SERVER_HOSTNAME}:${env.SERVER_PORT}`);
-    });
+    if (env.BUILD_MODE === "development") {
+        app.listen(env.LOCAL_SERVER_PORT, env.LOCAL_SERVER_HOSTNAME, () => {
+            console.log(
+                "3. [Development] Hi ",
+                env.AUTHOR,
+                ", Server running at ",
+                `http://${env.LOCAL_SERVER_HOSTNAME}:${env.LOCAL_SERVER_PORT}`,
+            );
+        });
+    } else {
+        app.listen(process.env.PORT, () => {
+            console.log(`3. [Production] Hi ${env.AUTHOR}, Server running at port:${process.env.PORT}`);
+        });
+    }
 
     exitHook(() => {
         console.log("n. Exit App");
