@@ -83,6 +83,15 @@ const update = async (id: string, updateData: Record<string, unknown>) => {
         .collection<BoardDocument>(collectionName)
         .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updateData }, { returnDocument: "after" });
 };
+const pullColumnOrderIds = async (column: WithId<{ boardId: ObjectId | string }>) => {
+    return getDB()
+        .collection<BoardDocument>(collectionName)
+        .findOneAndUpdate(
+            { _id: new ObjectId(column.boardId) },
+            { $pull: { columnOrderIds: new ObjectId(column._id) } },
+            { returnDocument: "after" },
+        );
+};
 
 export const boardModel = {
     collectionName,
@@ -92,4 +101,5 @@ export const boardModel = {
     getDetail,
     pushColumnOrderIds,
     update,
+    pullColumnOrderIds,
 };
