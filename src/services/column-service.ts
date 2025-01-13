@@ -26,8 +26,16 @@ const update = async (id: string, reqBody: Record<string, unknown>) => {
     return updatedColumn;
 };
 const deleteItem = async (id: string) => {
-    await columnModel.deleteOnById(id);
+    const targetColumn = await columnModel.findOneById(id);
+
+    if (!targetColumn) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Column not found!");
+    }
+
     await cardModel.deleteManyByColumnId(id);
+    await columnModel.deleteOnById(id);
+    await boardModel.pullColumnOrderIds(targetColumn);
+
     return { deleteResult: "Column and its Cards deleted successfully!" };
 };
 
