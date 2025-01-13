@@ -49,7 +49,34 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
+const moveCardToAnotherColumn = async (req: Request, res: Response, next: NextFunction) => {
+    const correctCondition = Joi.object({
+        currentCardId: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
+        prevColumnId: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
+        nextColumnId: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
+
+        prevCardOrderIds: Joi.array()
+            .required()
+            .items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)),
+        nextCardOrderIds: Joi.array()
+            .required()
+            .items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)),
+    });
+
+    try {
+        await correctCondition.validateAsync(req.body, { abortEarly: false });
+        next();
+    } catch (error) {
+        if (error instanceof Error) {
+            next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, error.message));
+        } else {
+            next(error);
+        }
+    }
+};
+
 export const boardValidation = {
     createNew,
     update,
+    moveCardToAnotherColumn,
 };

@@ -28,6 +28,7 @@ const collectionSchema = Joi.object<ICardValidate>({
     updatedAt: Joi.date().timestamp("javascript").default(null),
     _destroy: Joi.boolean().default(false),
 });
+const invalidUpdateFields = ["boardId", "_id", "createdAt"];
 
 const validateBeforeCreate = async (data: Record<string, unknown>) => {
     return collectionSchema.validateAsync(data, { abortEarly: false });
@@ -48,9 +49,24 @@ const findOneById = async (id: ObjectId | string | undefined) => {
         .findOne({ _id: new ObjectId(id) });
 };
 
+const update = async (id: string, updateData: Record<string, unknown>) => {
+    Object.keys(updateData).forEach((key) => {
+        if (invalidUpdateFields.includes(key)) {
+            delete updateData[key];
+        }
+    });
+
+    if (updateData.columnId) updateData.columnId = new ObjectId(String(updateData.columnId));
+
+    return getDB()
+        .collection<CardDocument>(collectionName)
+        .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updateData }, { returnDocument: "after" });
+};
+
 export const cardModel = {
     collectionName,
     collectionSchema,
     createNew,
     findOneById,
+    update,
 };
