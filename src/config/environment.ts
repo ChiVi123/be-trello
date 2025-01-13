@@ -13,8 +13,7 @@ export const env = {
     BUILD_MODE: process.env.BUILD_MODE,
     MONGO_URI: process.env.MONGO_URI || mongoUri + "?retryWrites=true&w=majority&appName=Cluster0",
     MONGO_DATABASE_NAME: process.env.MONGO_DATABASE_NAME,
-    SERVER_PROTOCOL: process.env.SERVER_PROTOCOL,
-    SERVER_HOSTNAME: process.env.SERVER_HOSTNAME || "http",
-    SERVER_PORT: process.env.SERVER_PORT ? Number(process.env.SERVER_PORT) : 8080,
+    LOCAL_SERVER_HOSTNAME: process.env.LOCAL_SERVER_HOSTNAME || "localhost",
+    LOCAL_SERVER_PORT: process.env.LOCAL_SERVER_PORT ? Number(process.env.LOCAL_SERVER_PORT) : 8080,
     CORS_WHITELIST_ORIGINS: corsOriginsString?.split(",") || [],
 };
