@@ -57,6 +57,10 @@ const update = async (id: string, updateData: Record<string, unknown>) => {
         }
     });
 
+    if (updateData?.cardOrderIds && Array.isArray(updateData?.cardOrderIds)) {
+        updateData.cardOrderIds = updateData.cardOrderIds.map((id) => new ObjectId(String(id)));
+    }
+
     return getDB()
         .collection<ColumnDocument>(collectionName)
         .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updateData }, { returnDocument: "after" });
