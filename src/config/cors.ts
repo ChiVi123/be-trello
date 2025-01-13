@@ -5,9 +5,8 @@ import { StatusCodes } from "~utils/status-codes";
 
 export const corsOptions: CorsOptions = {
     origin: function (origin, callback) {
-        // Accept API are called by POSTMAN in mode dev,
-        // Regular case using POSTMAN, origin is set an undefined
-        if (!origin && env.BUILD_MODE === "development") {
+        // Accept API are called in mode dev, (Regular case using POSTMAN, origin is set an undefined)
+        if (env.BUILD_MODE === "development") {
             return callback(null, true);
         }
 
