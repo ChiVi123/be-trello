@@ -48,7 +48,6 @@ const findOneById = async (id: ObjectId | string | undefined) => {
         .collection<CardDocument>(collectionName)
         .findOne({ _id: new ObjectId(id) });
 };
-
 const update = async (id: string, updateData: Record<string, unknown>) => {
     Object.keys(updateData).forEach((key) => {
         if (invalidUpdateFields.includes(key)) {
@@ -62,6 +61,11 @@ const update = async (id: string, updateData: Record<string, unknown>) => {
         .collection<CardDocument>(collectionName)
         .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updateData }, { returnDocument: "after" });
 };
+const deleteManyByColumnId = async (columnId: string) => {
+    return getDB()
+        .collection<CardDocument>(collectionName)
+        .deleteMany({ columnId: new ObjectId(columnId) });
+};
 
 export const cardModel = {
     collectionName,
@@ -69,4 +73,5 @@ export const cardModel = {
     createNew,
     findOneById,
     update,
+    deleteManyByColumnId,
 };

@@ -1,4 +1,5 @@
 import { boardModel } from "~models/board-model";
+import { cardModel } from "~models/card-model";
 import { columnModel } from "~models/column-model";
 import ApiError from "~utils/api-error";
 import { StatusCodes } from "~utils/status-codes";
@@ -24,8 +25,14 @@ const update = async (id: string, reqBody: Record<string, unknown>) => {
 
     return updatedColumn;
 };
+const deleteItem = async (id: string) => {
+    await columnModel.deleteOnById(id);
+    await cardModel.deleteManyByColumnId(id);
+    return { deleteResult: "Column and its Cards deleted successfully!" };
+};
 
 export const columnService = {
     createNew,
     update,
+    deleteItem,
 };
