@@ -25,6 +25,8 @@ const collectionSchema = Joi.object<IColumnValidate>({
     _destroy: Joi.boolean().default(false),
 });
 
+const invalidUpdateFields = ["boardId", "_id", "createdAt"];
+
 const validateBeforeCreate = async (data: Record<string, unknown>) => {
     return collectionSchema.validateAsync(data, { abortEarly: false });
 };
@@ -48,6 +50,17 @@ const pushCardOrderIds = async (card: WithId<{ columnId: ObjectId | string }>) =
             { returnDocument: "after" },
         );
 };
+const update = async (id: string, updateData: Record<string, unknown>) => {
+    Object.keys(updateData).forEach((key) => {
+        if (invalidUpdateFields.includes(key)) {
+            delete updateData[key];
+        }
+    });
+
+    return getDB()
+        .collection<ColumnDocument>(collectionName)
+        .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updateData }, { returnDocument: "after" });
+};
 
 export const columnModel = {
     collectionName,
@@ -55,4 +68,5 @@ export const columnModel = {
     createNew,
     findOneById,
     pushCardOrderIds,
+    update,
 };
