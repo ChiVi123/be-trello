@@ -38,8 +38,25 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
         }
     }
 };
+const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
+    const correctCondition = Joi.object({
+        id: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
+    });
+
+    try {
+        await correctCondition.validateAsync(req.params);
+        next();
+    } catch (error) {
+        if (error instanceof Error) {
+            next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, error.message));
+        } else {
+            next(error);
+        }
+    }
+};
 
 export const columnValidation = {
     createNew,
     update,
+    deleteItem,
 };

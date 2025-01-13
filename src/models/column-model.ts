@@ -65,6 +65,11 @@ const update = async (id: string, updateData: Record<string, unknown>) => {
         .collection<ColumnDocument>(collectionName)
         .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updateData }, { returnDocument: "after" });
 };
+const deleteOnById = async (id: ObjectId | string | undefined) => {
+    return getDB()
+        .collection<ColumnDocument>(collectionName)
+        .deleteOne({ _id: new ObjectId(id) });
+};
 
 export const columnModel = {
     collectionName,
@@ -73,4 +78,5 @@ export const columnModel = {
     findOneById,
     pushCardOrderIds,
     update,
+    deleteOnById,
 };
