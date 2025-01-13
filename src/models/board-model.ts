@@ -75,6 +75,10 @@ const update = async (id: string, updateData: Record<string, unknown>) => {
         }
     });
 
+    if (updateData?.columnOrderIds && Array.isArray(updateData?.columnOrderIds)) {
+        updateData.columnOrderIds = updateData.columnOrderIds.map((id) => new ObjectId(String(id)));
+    }
+
     return getDB()
         .collection<BoardDocument>(collectionName)
         .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updateData }, { returnDocument: "after" });
