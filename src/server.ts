@@ -24,9 +24,9 @@ const startServer = () => {
     if (env.BUILD_MODE === "development") {
         app.listen(env.LOCAL_SERVER_PORT, env.LOCAL_SERVER_HOSTNAME, () => {
             console.log(
-                "3. [Development] Hi ",
-                env.AUTHOR,
-                ", Server running at ",
+                "3. [Development] Hi",
+                `${env.AUTHOR},`,
+                "Server running at",
                 `http://${env.LOCAL_SERVER_HOSTNAME}:${env.LOCAL_SERVER_PORT}`,
             );
         });
