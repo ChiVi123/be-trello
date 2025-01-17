@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { boardRoute } from "./board-route";
-import { cardRoute } from "./card-route";
-import { columnRoute } from "./column-route";
-import { userRoute } from "./user-route";
+import { boardRoute } from "~routes/v1/board-route";
+import { cardRoute } from "~routes/v1/card-route";
+import { columnRoute } from "~routes/v1/column-route";
+import { userRoute } from "~routes/v1/user-route";
 
 const router = Router();
 

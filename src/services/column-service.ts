@@ -1,12 +1,13 @@
+import { OptionalId } from "mongodb";
 import { boardModel } from "~models/board-model";
 import { cardModel } from "~models/card-model";
-import { columnModel } from "~models/column-model";
+import { columnModel, IColumnDocument } from "~models/column-model";
 import ApiError from "~utils/api-error";
 import { StatusCodes } from "~utils/status-codes";
 
-const createNew = async (data: Record<string, unknown>) => {
+const createNew = async (data: OptionalId<IColumnDocument>) => {
     const newColumn = { ...data };
-    const insertedOneResult = await columnModel.createNew(newColumn);
+    const insertedOneResult = await columnModel.create(newColumn);
     const getNewColumn = await columnModel.findOneById(insertedOneResult.insertedId);
 
     if (getNewColumn) {

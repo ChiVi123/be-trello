@@ -1,15 +1,15 @@
 import { cloneDeep } from "lodash";
-import { ObjectId } from "mongodb";
-import { boardModel } from "~models/board-model";
+import { ObjectId, OptionalId } from "mongodb";
+import { boardModel, IBoardDocument } from "~models/board-model";
 import { cardModel } from "~models/card-model";
 import { columnModel } from "~models/column-model";
 import ApiError from "~utils/api-error";
 import { slugify } from "~utils/formatters";
 import { StatusCodes } from "~utils/status-codes";
 
-const createNew = async (data: Record<string, unknown>) => {
+const createNew = async (data: OptionalId<IBoardDocument>) => {
     const newBoard = { ...data, slug: slugify(data.title) };
-    const insertedOneResult = await boardModel.createNew(newBoard);
+    const insertedOneResult = await boardModel.create(newBoard);
     return boardModel.findOneById(insertedOneResult.insertedId);
 };
 const getDetail = async (id: string) => {

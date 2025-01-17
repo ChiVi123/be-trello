@@ -1,9 +1,10 @@
-import { cardModel } from "~models/card-model";
+import { OptionalId } from "mongodb";
+import { cardModel, ICardDocument } from "~models/card-model";
 import { columnModel } from "~models/column-model";
 
-const createNew = async (data: Record<string, unknown>) => {
+const createNew = async (data: OptionalId<ICardDocument>) => {
     const newCard = { ...data };
-    const insertedOneResult = await cardModel.createNew(newCard);
+    const insertedOneResult = await cardModel.create(newCard);
     const getNewCard = await cardModel.findOneById(insertedOneResult.insertedId);
 
     if (getNewCard) {

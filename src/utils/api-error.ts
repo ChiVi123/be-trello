@@ -1,4 +1,4 @@
-import { StatusCodes } from "./status-codes";
+import { StatusCodes } from "~utils/status-codes";
 
 class ApiError extends Error {
     public statusCode: StatusCodes;
