@@ -76,11 +76,13 @@ const login = async (reqBody: Record<string, unknown>) => {
         userInfo,
         env.ACCESS_TOKEN_SECRET_SIGNATURE,
         env.ACCESS_TOKEN_LIFE,
+        // 5, // 5s
     );
     const refreshToken = await JwtProvider.generateToken(
         userInfo,
         env.REFRESH_TOKEN_SECRET_SIGNATURE,
         env.REFRESH_TOKEN_LIFE,
+        // 15, // 15s
     );
 
     return { accessToken, refreshToken, ...pickUser(existUser) };
