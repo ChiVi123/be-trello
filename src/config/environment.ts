@@ -8,6 +8,10 @@ const mongoUri = `mongodb+srv://${mongoUsername}:${mongoPassword}@${mongoCluster
 
 const corsOriginsString = process.env.CORS_WHITELIST_ORIGINS;
 
+if (!process.env.WEBSITE_DOMAIN) {
+    throw new Error("env variable WEBSITE_DOMAIN is required");
+}
+
 export const env = {
     AUTHOR: process.env.AUTHOR,
     BUILD_MODE: process.env.BUILD_MODE,
@@ -16,4 +20,8 @@ export const env = {
     LOCAL_SERVER_HOSTNAME: process.env.LOCAL_SERVER_HOSTNAME || "localhost",
     LOCAL_SERVER_PORT: process.env.LOCAL_SERVER_PORT ? Number(process.env.LOCAL_SERVER_PORT) : 8080,
     CORS_WHITELIST_ORIGINS: corsOriginsString?.split(",") || [],
+    WEBSITE_DOMAIN: process.env.WEBSITE_DOMAIN,
+    BREVO_API_KEY: process.env.BREVO_API_KEY,
+    BREVO_EMAIL_ADDRESS: process.env.BREVO_EMAIL_ADDRESS,
+    BREVO_EMAIL_NAME: process.env.BREVO_EMAIL_NAME,
 };
