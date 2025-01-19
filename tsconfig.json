@@ -21,7 +21,8 @@
             "~sockets/*": ["./src/sockets/*"],
             "~utils/*": ["./src/utils/*"],
             "~validators/*": ["./src/validators/*"]
-        }
+        },
+        "typeRoots": ["./src/types"]
     },
     "ts-node": {
         "require": ["tsconfig-paths/register"]

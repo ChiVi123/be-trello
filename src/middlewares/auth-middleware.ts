@@ -7,7 +7,7 @@ import { StatusCodes } from "~utils/status-codes";
 
 declare module "express" {
     interface Request {
-        accessTokenDecoded?: string | JwtPayload;
+        jwtDecoded?: JwtPayload;
     }
 }
 
@@ -20,7 +20,7 @@ const isAuthorized = async (req: Request, res: Response, next: NextFunction) => 
 
     try {
         const accessTokenDecoded = await JwtProvider.verifyToken(clientAccessToken, env.ACCESS_TOKEN_SECRET_SIGNATURE);
-        req.accessTokenDecoded = accessTokenDecoded;
+        req.jwtDecoded = accessTokenDecoded as JwtPayload;
         next();
     } catch (error) {
         if (error instanceof Error && error.message.includes("jwt expired")) {

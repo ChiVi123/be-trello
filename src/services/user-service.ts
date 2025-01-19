@@ -1,5 +1,6 @@
 import bcryptjs from "bcryptjs";
 import { JwtPayload } from "jsonwebtoken";
+import { Document, ObjectId, WithId } from "mongodb";
 import { v4 as uuidv4 } from "uuid";
 import { env } from "~config/environment";
 import { userModel } from "~models/user-model";
@@ -103,10 +104,32 @@ const refreshToken = async (clientRefreshToken: string) => {
     );
     return { accessToken };
 };
+const update = async (userId: string | ObjectId, reqBody: Record<string, unknown>) => {
+    const existUser = await userModel.findOneById(userId);
+    if (!existUser) throw new ApiError(StatusCodes.NOT_FOUND, "Account not found!");
+    if (!existUser.isActive) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, "Your account is not active!");
+
+    let updatedUser: WithId<Document> | null = null;
+
+    if (reqBody?.currentPassword && reqBody?.newPassword) {
+        if (!bcryptjs.compareSync(String(reqBody.currentPassword), existUser.password)) {
+            throw new ApiError(StatusCodes.NOT_ACCEPTABLE, "Your current password is incorrect!");
+        }
+
+        updatedUser = await userModel.update(userId, {
+            password: bcryptjs.hashSync(String(reqBody.newPassword), 8),
+        });
+    } else {
+        updatedUser = await userModel.update(userId, reqBody);
+    }
+
+    return pickUser(updatedUser);
+};
 
 export const userService = {
     createNew,
     verify,
     login,
     refreshToken,
+    update,
 };
