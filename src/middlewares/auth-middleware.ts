@@ -11,14 +11,7 @@ declare module "express" {
     }
 }
 
-interface IAuthRequest extends Request {
-    cookies: {
-        accessToken?: string | undefined;
-        refreshToken?: string | undefined;
-    };
-}
-
-const isAuthorized = async (req: IAuthRequest, res: Response, next: NextFunction) => {
+const isAuthorized = async (req: Request, res: Response, next: NextFunction) => {
     const clientAccessToken = req.cookies?.accessToken;
     if (!clientAccessToken) {
         next(new ApiError(StatusCodes.UNAUTHORIZED, "Unauthorized! (Token not found)"));
