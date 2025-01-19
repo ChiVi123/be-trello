@@ -1,4 +1,5 @@
 import bcryptjs from "bcryptjs";
+import { JwtPayload } from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import { env } from "~config/environment";
 import { userModel } from "~models/user-model";
@@ -87,9 +88,25 @@ const login = async (reqBody: Record<string, unknown>) => {
 
     return { accessToken, refreshToken, ...pickUser(existUser) };
 };
+const refreshToken = async (clientRefreshToken: string) => {
+    const refreshTokenDecoded = (await JwtProvider.verifyToken(
+        clientRefreshToken,
+        env.REFRESH_TOKEN_SECRET_SIGNATURE,
+    )) as JwtPayload;
+
+    const userInfo = { _id: refreshTokenDecoded._id, email: refreshTokenDecoded.email };
+    const accessToken = await JwtProvider.generateToken(
+        userInfo,
+        env.ACCESS_TOKEN_SECRET_SIGNATURE,
+        env.ACCESS_TOKEN_LIFE,
+        // 5, // 5s
+    );
+    return { accessToken };
+};
 
 export const userService = {
     createNew,
     verify,
     login,
+    refreshToken,
 };
