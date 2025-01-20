@@ -30,20 +30,26 @@ const invalidUpdateFields = ["_id", "createdAt"];
 const validateBeforeCreate = async (data: Record<string, unknown>) => {
     return collectionSchema.validateAsync(data, { abortEarly: false });
 };
-const createNew = async (data: Record<string, unknown>) => {
+const createNew = async (userId: string | ObjectId, data: Record<string, unknown>) => {
     const validData = await validateBeforeCreate(data);
-    return getDB().collection(collectionName).insertOne(validData);
+    const newBoard = { ...validData, ownerIds: [new ObjectId(userId)] };
+    return getDB().collection(collectionName).insertOne(newBoard);
 };
 const findOneById = async (id: ObjectId | string | undefined) => {
     return getDB()
         .collection(collectionName)
         .findOne({ _id: new ObjectId(id) });
 };
-const getDetail = async (id: ObjectId | string | undefined) => {
+const getDetail = async (userId: string | ObjectId, boardId: ObjectId | string | undefined) => {
+    const queryConditions = [
+        { _id: new ObjectId(boardId) },
+        { _destroy: false },
+        { $or: [{ ownerIds: { $all: [new ObjectId(userId)] } }, { memberIds: { $all: [new ObjectId(userId)] } }] },
+    ];
     const result = await getDB()
         .collection(collectionName)
         .aggregate([
-            { $match: { _id: new ObjectId(id), _destroy: false } },
+            { $match: { $and: queryConditions } },
             {
                 $lookup: {
                     from: columnModel.collectionName,

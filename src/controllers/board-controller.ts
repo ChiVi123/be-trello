@@ -3,25 +3,27 @@ import { boardService } from "~services/board-service";
 import { StatusCodes } from "~utils/status-codes";
 
 const createNew = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.jwtDecoded?._id;
     try {
-        const createdBoard = await boardService.createNew(req.body);
+        const createdBoard = await boardService.createNew(userId, req.body);
         res.status(StatusCodes.CREATED).json(createdBoard);
     } catch (error) {
         next(error);
     }
 };
 const getDetail = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.jwtDecoded?._id;
+    const boardId = req.params.id;
     try {
-        const boardId = req.params.id;
-        const board = await boardService.getDetail(boardId);
+        const board = await boardService.getDetail(userId, boardId);
         res.status(StatusCodes.OK).json(board);
     } catch (error) {
         next(error);
     }
 };
 const update = async (req: Request, res: Response, next: NextFunction) => {
+    const boardId = req.params.id;
     try {
-        const boardId = req.params.id;
         const updatedBoard = await boardService.update(boardId, req.body);
         res.status(StatusCodes.OK).json(updatedBoard);
     } catch (error) {
