@@ -14,8 +14,8 @@ const createNew = async (data: Record<string, unknown>) => {
     const insertedOneResult = await boardModel.createNew(newBoard);
     return boardModel.findOneById(insertedOneResult.insertedId);
 };
-const getDetail = async (id: string) => {
-    const board = await boardModel.getDetail(id);
+const getDetail = async (userId: string | ObjectId, boardId: string) => {
+    const board = await boardModel.getDetail(userId, boardId);
     if (!board) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Board not found!");
     }
