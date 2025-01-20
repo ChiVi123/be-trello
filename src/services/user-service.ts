@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { env } from "~config/environment";
 import { userModel } from "~models/user-model";
 import { BrevoProvider } from "~providers/brevo-provider";
+import { cloudinaryProvider } from "~providers/cloudinary-provider";
 import { JwtProvider } from "~providers/jwt-provider";
 import ApiError from "~utils/api-error";
 import { pickUser } from "~utils/formatters";
@@ -104,7 +105,11 @@ const refreshToken = async (clientRefreshToken: string) => {
     );
     return { accessToken };
 };
-const update = async (userId: string | ObjectId, reqBody: Record<string, unknown>) => {
+const update = async (
+    userId: string | ObjectId,
+    reqBody: Record<string, unknown>,
+    userAvatar: Express.Multer.File | undefined,
+) => {
     const existUser = await userModel.findOneById(userId);
     if (!existUser) throw new ApiError(StatusCodes.NOT_FOUND, "Account not found!");
     if (!existUser.isActive) throw new ApiError(StatusCodes.NOT_ACCEPTABLE, "Your account is not active!");
@@ -118,6 +123,11 @@ const update = async (userId: string | ObjectId, reqBody: Record<string, unknown
 
         updatedUser = await userModel.update(userId, {
             password: bcryptjs.hashSync(String(reqBody.newPassword), 8),
+        });
+    } else if (userAvatar) {
+        const uploadResult = await cloudinaryProvider.streamUploadSingle(userAvatar.buffer, "trello-mern/users");
+        updatedUser = await userModel.update(userId, {
+            avatar: uploadResult?.secure_url ?? null,
         });
     } else {
         updatedUser = await userModel.update(userId, reqBody);
