@@ -3,8 +3,9 @@ import { boardService } from "~services/board-service";
 import { StatusCodes } from "~utils/status-codes";
 
 const createNew = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.jwtDecoded?._id;
     try {
-        const createdBoard = await boardService.createNew(req.body);
+        const createdBoard = await boardService.createNew(userId, req.body);
         res.status(StatusCodes.CREATED).json(createdBoard);
     } catch (error) {
         next(error);

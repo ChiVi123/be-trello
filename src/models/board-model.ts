@@ -30,9 +30,10 @@ const invalidUpdateFields = ["_id", "createdAt"];
 const validateBeforeCreate = async (data: Record<string, unknown>) => {
     return collectionSchema.validateAsync(data, { abortEarly: false });
 };
-const createNew = async (data: Record<string, unknown>) => {
+const createNew = async (userId: string | ObjectId, data: Record<string, unknown>) => {
     const validData = await validateBeforeCreate(data);
-    return getDB().collection(collectionName).insertOne(validData);
+    const newBoard = { ...validData, ownerIds: [new ObjectId(userId)] };
+    return getDB().collection(collectionName).insertOne(newBoard);
 };
 const findOneById = async (id: ObjectId | string | undefined) => {
     return getDB()

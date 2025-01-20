@@ -9,9 +9,9 @@ import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE } from "~utils/constants";
 import { slugify } from "~utils/formatters";
 import { StatusCodes } from "~utils/status-codes";
 
-const createNew = async (data: Record<string, unknown>) => {
+const createNew = async (userId: string | ObjectId, data: Record<string, unknown>) => {
     const newBoard = { ...data, slug: slugify(data.title) };
-    const insertedOneResult = await boardModel.createNew(newBoard);
+    const insertedOneResult = await boardModel.createNew(userId, newBoard);
     return boardModel.findOneById(insertedOneResult.insertedId);
 };
 const getDetail = async (userId: string | ObjectId, boardId: string) => {
