@@ -1,9 +1,11 @@
+import { Request } from "express";
 import { cloneDeep } from "lodash";
 import { ObjectId } from "mongodb";
 import { boardModel } from "~models/board-model";
 import { cardModel } from "~models/card-model";
 import { columnModel } from "~models/column-model";
 import ApiError from "~utils/api-error";
+import { DEFAULT_ITEMS_PER_PAGE, DEFAULT_PAGE } from "~utils/constants";
 import { slugify } from "~utils/formatters";
 import { StatusCodes } from "~utils/status-codes";
 
@@ -51,10 +53,20 @@ const moveCardToAnotherColumn = async (reqBody: MoveCardToAnotherColumnBodyReque
 
     return { updateResult: "success" };
 };
+type ValuePage = string | Request["query"] | string[] | Request["query"][] | undefined;
+const getBoards = (userId: string | ObjectId, page: ValuePage, itemsPerPage: ValuePage) => {
+    if (!page) page = DEFAULT_PAGE;
+    if (!itemsPerPage) itemsPerPage = DEFAULT_ITEMS_PER_PAGE;
+    if (typeof page !== "string" || typeof itemsPerPage !== "string") {
+        throw new Error("'page' or 'itemsPerPage' should be string");
+    }
+    return boardModel.getBoards(userId, parseInt(page, 10), parseInt(itemsPerPage, 10));
+};
 
 export const boardService = {
     createNew,
     getDetail,
     update,
     moveCardToAnotherColumn,
+    getBoards,
 };
