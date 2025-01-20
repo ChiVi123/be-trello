@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { ObjectId, WithId } from "mongodb";
 import { getDB } from "~config/mongodb";
+import { pagingSkipValue } from "~utils/algorithms";
 import { BOARD_TYPES } from "~utils/constants";
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "~utils/validators";
 import { cardModel } from "./card-model";
@@ -16,6 +17,10 @@ const collectionSchema = Joi.object({
     type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE).required(),
 
     columnOrderIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
+
+    ownerIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
+    memberIds: Joi.array().items(Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)).default([]),
+
     createdAt: Joi.date().timestamp("javascript").default(Date.now),
     updatedAt: Joi.date().timestamp("javascript").default(null),
     _destroy: Joi.boolean().default(false),
@@ -92,7 +97,36 @@ const pullColumnOrderIds = async (column: WithId<{ boardId: ObjectId | string }>
             { returnDocument: "after" },
         );
 };
+const getBoards = async (userId: string | ObjectId, page: number, itemsPerPage: number) => {
+    const queryConditions = [
+        { _destroy: false },
+        { $or: [{ ownerIds: { $all: [new ObjectId(userId)] } }, { memberIds: { $all: [new ObjectId(userId)] } }] },
+    ];
+    const query = await getDB()
+        .collection(collectionName)
+        .aggregate(
+            [
+                { $match: { $and: queryConditions } },
+                { $sort: { title: 1 } },
+                {
+                    $facet: {
+                        queryBoards: [{ $skip: pagingSkipValue(page, itemsPerPage) }, { $limit: itemsPerPage }],
+                        queryTotalBoards: [{ $count: "countedAllBoards" }],
+                    },
+                },
+            ],
+            // https://www.mongodb.com/docs/v6.0/reference/collation/#std-label-collation-document-fields
+            { collation: { locale: "en" } },
+        )
+        .toArray();
 
+    const res = query[0];
+    return {
+        boards: res.queryBoards ?? [],
+        totalBoards: res.queryTotalBoards[0]?.countedAllBoards ?? 0,
+    };
+};
+// algorithms
 export const boardModel = {
     collectionName,
     collectionSchema,
@@ -102,4 +136,5 @@ export const boardModel = {
     pushColumnOrderIds,
     update,
     pullColumnOrderIds,
+    getBoards,
 };
