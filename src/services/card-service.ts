@@ -12,7 +12,12 @@ const createNew = async (data: Record<string, unknown>) => {
 
     return getNewCard;
 };
+const update = async (id: string, data: Record<string, unknown>) => {
+    const updateCard = { ...data, updatedAt: Date.now() };
+    return cardModel.update(id, updateCard);
+};
 
 export const cardService = {
     createNew,
+    update,
 };
