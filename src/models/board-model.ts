@@ -6,6 +6,7 @@ import { BOARD_TYPES } from "~utils/constants";
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "~utils/validators";
 import { cardModel } from "./card-model";
 import { columnModel } from "./column-model";
+import { userModel } from "./user-model";
 
 type BoardDocument = Document & { columnOrderIds: ObjectId[] };
 
@@ -64,6 +65,27 @@ const getDetail = async (userId: string | ObjectId, boardId: ObjectId | string |
                     localField: "_id",
                     foreignField: "boardId",
                     as: "cards",
+                },
+            },
+            {
+                $lookup: {
+                    from: userModel.collectionName,
+                    localField: "ownerIds",
+                    foreignField: "_id",
+                    as: "owners",
+                    // pipeline to run on joined collection
+                    // Passes along the documents with the requested fields to the next stage in the pipeline
+                    // false or 0 (the exclusion of a field)
+                    pipeline: [{ $project: { password: 0, verifyToken: 0 } }],
+                },
+            },
+            {
+                $lookup: {
+                    from: userModel.collectionName,
+                    localField: "memberIds",
+                    foreignField: "_id",
+                    as: "members",
+                    pipeline: [{ $project: { password: 0, verifyToken: 0 } }],
                 },
             },
         ])
@@ -132,7 +154,7 @@ const getBoards = async (userId: string | ObjectId, page: number, itemsPerPage: 
         totalBoards: res.queryTotalBoards[0]?.countedAllBoards ?? 0,
     };
 };
-// algorithms
+
 export const boardModel = {
     collectionName,
     collectionSchema,
