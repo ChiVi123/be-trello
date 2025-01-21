@@ -67,7 +67,7 @@ const createNew = async (data: Record<string, unknown>) => {
             columnId: new ObjectId(validData.columnId),
         });
 };
-const findOneById = async (id: ObjectId | string | undefined) => {
+const findOneById = (id: ObjectId | string | undefined) => {
     return getDB()
         .collection<CardDocument>(collectionName)
         .findOne({ _id: new ObjectId(id) });
@@ -85,10 +85,19 @@ const update = async (id: string, updateData: Record<string, unknown>) => {
         .collection<CardDocument>(collectionName)
         .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updateData }, { returnDocument: "after" });
 };
-const deleteManyByColumnId = async (columnId: string) => {
+const deleteManyByColumnId = (columnId: string) => {
     return getDB()
         .collection<CardDocument>(collectionName)
         .deleteMany({ columnId: new ObjectId(columnId) });
+};
+const unshiftNewComment = (cardId: string, commentData: Record<string, unknown>) => {
+    return getDB()
+        .collection<CardDocument>(collectionName)
+        .findOneAndUpdate(
+            { _id: new ObjectId(cardId) },
+            { $push: { comments: { $each: [commentData], $position: 0 } } },
+            { returnDocument: "after" },
+        );
 };
 
 export const cardModel = {
@@ -98,4 +107,5 @@ export const cardModel = {
     findOneById,
     update,
     deleteManyByColumnId,
+    unshiftNewComment,
 };
