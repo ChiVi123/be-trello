@@ -71,4 +71,4 @@ const update = async (id: ObjectId | string, updateData: Record<string, unknown>
         .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updateData }, { returnDocument: "after" });
 };
 
-export const userModel = { createNew, findOneById, findOneByEmail, update };
+export const userModel = { collectionName, createNew, findOneById, findOneByEmail, update };

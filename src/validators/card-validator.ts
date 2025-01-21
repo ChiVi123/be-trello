@@ -22,7 +22,30 @@ const createNew = async (req: Request, res: Response, next: NextFunction) => {
         }
     }
 };
+const update = async (req: Request, res: Response, next: NextFunction) => {
+    const correctCondition = Joi.object({
+        title: Joi.string().min(3).max(50).trim().strict(),
+        description: Joi.string().optional(),
+        commentToAdd: Joi.object({
+            userAvatar: Joi.string(),
+            userDisplayName: Joi.string(),
+            content: Joi.string(),
+        }),
+    });
+
+    try {
+        await correctCondition.validateAsync(req.body, { abortEarly: false });
+        next();
+    } catch (error) {
+        if (error instanceof Error) {
+            next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, error.message));
+        } else {
+            next(error);
+        }
+    }
+};
 
 export const cardValidation = {
     createNew,
+    update,
 };
