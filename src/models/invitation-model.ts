@@ -74,20 +74,24 @@ const createNewBoardInvitation = async (data: Record<string, unknown>) => {
 };
 const findOneById = async (id: ObjectId | string | undefined) => {
     return getDB()
-        .collection(collectionName)
+        .collection<IInvitationModel>(collectionName)
         .findOne({ _id: new ObjectId(id) });
 };
-const update = async (id: string, updateData: IInvitationModel) => {
+const update = async (id: string, updateData: Record<string, unknown>) => {
     Object.keys(updateData).forEach((key) => {
         if (invalidUpdateFields.includes(key as keyof IInvitationModel)) {
             delete updateData[key as keyof IInvitationModel];
         }
     });
 
-    if (updateData?.boardInvitation) {
+    if (
+        updateData?.boardInvitation &&
+        typeof updateData.boardInvitation === "object" &&
+        "boardId" in updateData.boardInvitation
+    ) {
         updateData.boardInvitation = {
             ...updateData.boardInvitation,
-            boardId: new ObjectId(updateData.boardInvitation.boardId),
+            boardId: new ObjectId(updateData.boardInvitation.boardId as string),
         };
     }
 
