@@ -3,16 +3,20 @@ import { ObjectId } from "mongodb";
 import { getDB } from "~config/mongodb";
 import { BOARD_INVITATION_STATUS, INVITATION_TYPES } from "~utils/constants";
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "~utils/validators";
+import { boardModel } from "./board-model";
+import { userModel } from "./user-model";
 
 interface IInvitationModel {
+    /** user inviting */
     inviterId: string | ObjectId;
+    /** user are invited */
     inviteeId: string | ObjectId;
 
     type: INVITATION_TYPES;
 
     boardInvitation?: {
         boardId: string | ObjectId;
-        status: string;
+        status: BOARD_INVITATION_STATUS;
     };
 
     createdAt: number;
@@ -91,6 +95,45 @@ const update = async (id: string, updateData: IInvitationModel) => {
         .collection<IInvitationModel>(collectionName)
         .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updateData }, { returnDocument: "after" });
 };
+const findByUserId = (userId: string | ObjectId) => {
+    const queryConditions = [
+        // user were invited, exactly query invitations
+        { inviteeId: new ObjectId(userId) },
+        { _destroy: false },
+    ];
+    return getDB()
+        .collection(collectionName)
+        .aggregate([
+            { $match: { $and: queryConditions } },
+            {
+                $lookup: {
+                    from: userModel.collectionName,
+                    localField: "inviterId",
+                    foreignField: "_id",
+                    as: "inviter",
+                    pipeline: [{ $project: { password: 0, verifyToken: 0 } }],
+                },
+            },
+            {
+                $lookup: {
+                    from: userModel.collectionName,
+                    localField: "inviteeId",
+                    foreignField: "_id",
+                    as: "invitee",
+                    pipeline: [{ $project: { password: 0, verifyToken: 0 } }],
+                },
+            },
+            {
+                $lookup: {
+                    from: boardModel.collectionName,
+                    localField: "boardInvitation.boardId",
+                    foreignField: "_id",
+                    as: "board",
+                },
+            },
+        ])
+        .toArray();
+};
 
 export const invitationModel = {
     collectionName,
@@ -98,4 +141,5 @@ export const invitationModel = {
     createNewBoardInvitation,
     findOneById,
     update,
+    findByUserId,
 };

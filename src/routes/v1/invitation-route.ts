@@ -10,5 +10,6 @@ Router.route("/board").post(
     invitationValidation.createNewBoardInvitation,
     invitationController.createNewBoardInvitation,
 );
+Router.route("/").get(authMiddleware.isAuthorized, invitationController.getInvitations);
 
 export const invitationRoute = Router;

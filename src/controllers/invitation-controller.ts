@@ -12,7 +12,21 @@ const createNewBoardInvitation = async (req: Request, res: Response, next: NextF
         next(error);
     }
 };
+/**
+ * Get invitations by user are logged
+ */
+const getInvitations = async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.jwtDecoded?._id;
+
+    try {
+        const result = await invitationService.getInvitationsByUserId(userId);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        next(error);
+    }
+};
 
 export const invitationController = {
     createNewBoardInvitation,
+    getInvitations,
 };
