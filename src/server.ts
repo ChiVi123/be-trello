@@ -3,11 +3,14 @@ import exitHook from "async-exit-hook";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
+import http from "http";
+import socketIO from "socket.io";
 import { corsOptions } from "~config/cors";
 import { env } from "~config/environment";
 import { closeMongoDB, connectDB } from "~config/mongodb";
 import { errorHandlingMiddleware } from "~middlewares/error-handling-middleware";
 import { apisV1 } from "~routes/v1";
+import { inviteUserToBoardSocket } from "~sockets/invite-user-to-board-socket";
 
 const startServer = () => {
     const app = express();
@@ -29,8 +32,18 @@ const startServer = () => {
     // Error handling - place right before listen method - if else the middleware is not working
     app.use(errorHandlingMiddleware);
 
+    // https://socket.io/get-started/chat/#integrating-socketio
+    // Create new server wrap app (express) to handle real-time with socket
+    const server = http.createServer(app);
+    const io = new socketIO.Server(server, { cors: corsOptions });
+
+    io.on("connection", (socket) => {
+        // Add all features socket is here
+        inviteUserToBoardSocket(socket);
+    });
+
     if (env.BUILD_MODE === "development") {
-        app.listen(env.LOCAL_SERVER_PORT, env.LOCAL_SERVER_HOSTNAME, () => {
+        server.listen(env.LOCAL_SERVER_PORT, env.LOCAL_SERVER_HOSTNAME, () => {
             console.log(
                 "3. [Development] Hi",
                 `${env.AUTHOR},`,
@@ -39,7 +52,7 @@ const startServer = () => {
             );
         });
     } else {
-        app.listen(process.env.PORT, () => {
+        server.listen(process.env.PORT, () => {
             console.log(`3. [Production] Hi ${env.AUTHOR}, Server running at port:${process.env.PORT}`);
         });
     }
