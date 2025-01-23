@@ -13,3 +13,8 @@ export enum BOARD_INVITATION_STATUS {
     ACCEPTED = "accepted",
     REJECTED = "rejected",
 }
+
+export enum CARD_MEMBERS_ACTIONS {
+    ADD = "add",
+    REMOVE = "remove",
+}

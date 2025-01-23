@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
 import ApiError from "~utils/api-error";
+import { CARD_MEMBERS_ACTIONS } from "~utils/constants";
 import { StatusCodes } from "~utils/status-codes";
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "~utils/validators";
 
@@ -30,6 +31,10 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
             userAvatar: Joi.string(),
             userDisplayName: Joi.string(),
             content: Joi.string(),
+        }),
+        incomingUserInfo: Joi.object({
+            userId: Joi.string().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE),
+            action: Joi.string().valid(...Object.values(CARD_MEMBERS_ACTIONS)),
         }),
     });
 
