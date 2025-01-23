@@ -1,6 +1,7 @@
 import Joi from "joi";
-import { ObjectId } from "mongodb";
+import { Filter, ObjectId } from "mongodb";
 import { getDB } from "~config/mongodb";
+import { CARD_MEMBERS_ACTIONS } from "~utils/constants";
 import { EMAIL_RULE, EMAIL_RULE_MESSAGE, OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from "~utils/validators";
 
 interface ICardValidate {
@@ -99,6 +100,22 @@ const unshiftNewComment = (cardId: string, commentData: Record<string, unknown>)
             { returnDocument: "after" },
         );
 };
+const updateMembers = async (cardId: string, incomingUserInfo: Record<string, unknown>) => {
+    const userObjectId = new ObjectId(incomingUserInfo.userId as string);
+    let updateCondition: Filter<CardDocument> = {};
+
+    if (incomingUserInfo.action === CARD_MEMBERS_ACTIONS.ADD) {
+        updateCondition = { $push: { memberIds: userObjectId } };
+    }
+
+    if (incomingUserInfo.action === CARD_MEMBERS_ACTIONS.REMOVE) {
+        updateCondition = { $pull: { memberIds: userObjectId } };
+    }
+
+    return getDB()
+        .collection<CardDocument>(collectionName)
+        .findOneAndUpdate({ _id: new ObjectId(cardId) }, updateCondition, { returnDocument: "after" });
+};
 
 export const cardModel = {
     collectionName,
@@ -108,4 +125,5 @@ export const cardModel = {
     update,
     deleteManyByColumnId,
     unshiftNewComment,
+    updateMembers,
 };
