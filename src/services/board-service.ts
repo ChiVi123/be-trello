@@ -53,14 +53,23 @@ const moveCardToAnotherColumn = async (reqBody: MoveCardToAnotherColumnBodyReque
 
     return { updateResult: "success" };
 };
-type ValuePage = string | Request["query"] | string[] | Request["query"][] | undefined;
-const getBoards = (userId: string | ObjectId, page: ValuePage, itemsPerPage: ValuePage) => {
+type ValueParams = string | Request["query"] | string[] | Request["query"][] | undefined;
+const getBoards = (
+    userId: string | ObjectId,
+    page: ValueParams,
+    itemsPerPage: ValueParams,
+    queryFilters: ValueParams,
+) => {
     if (!page) page = DEFAULT_PAGE;
     if (!itemsPerPage) itemsPerPage = DEFAULT_ITEMS_PER_PAGE;
     if (typeof page !== "string" || typeof itemsPerPage !== "string") {
-        throw new Error("'page' or 'itemsPerPage' should be string");
+        throw new ApiError(StatusCodes.BAD_REQUEST, "'page' or 'itemsPerPage' should be string");
     }
-    return boardModel.getBoards(userId, parseInt(page, 10), parseInt(itemsPerPage, 10));
+    if (typeof queryFilters === "string" || Array.isArray(queryFilters)) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "'q' should be a object");
+    }
+
+    return boardModel.getBoards(userId, parseInt(page, 10), parseInt(itemsPerPage, 10), queryFilters);
 };
 
 export const boardService = {
