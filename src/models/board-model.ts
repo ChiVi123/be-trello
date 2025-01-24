@@ -1,3 +1,4 @@
+import { Request } from "express";
 import Joi from "joi";
 import { ObjectId, WithId } from "mongodb";
 import { getDB } from "~config/mongodb";
@@ -127,11 +128,25 @@ const pullColumnOrderIds = async (column: WithId<{ boardId: ObjectId | string }>
             { returnDocument: "after" },
         );
 };
-const getBoards = async (userId: string | ObjectId, page: number, itemsPerPage: number) => {
-    const queryConditions = [
+const getBoards = async (
+    userId: string | ObjectId,
+    page: number,
+    itemsPerPage: number,
+    queryFilters: Request["query"] | undefined,
+) => {
+    const queryConditions: Record<string, unknown>[] = [
         { _destroy: false },
         { $or: [{ ownerIds: { $all: [new ObjectId(userId)] } }, { memberIds: { $all: [new ObjectId(userId)] } }] },
     ];
+
+    if (queryFilters) {
+        Object.keys(queryFilters).forEach((key) => {
+            if (typeof queryFilters[key] === "string") {
+                queryConditions.push({ [key]: { $regex: new RegExp(queryFilters[key], "i") } });
+            }
+        });
+    }
+
     const query = await getDB()
         .collection(collectionName)
         .aggregate(
@@ -146,6 +161,7 @@ const getBoards = async (userId: string | ObjectId, page: number, itemsPerPage: 
                 },
             ],
             // https://www.mongodb.com/docs/v6.0/reference/collation/#std-label-collation-document-fields
+            // sort by alphabet
             { collation: { locale: "en" } },
         )
         .toArray();
